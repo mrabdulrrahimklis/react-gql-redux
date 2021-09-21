@@ -44,9 +44,9 @@ class NavbarOne extends Component<any, any> {
     this.props.getCurrenciesAction();
   }
 
-  isActive = (name: string) => {
+  isActive(name: string) {
     return !!this.props.location.pathname.includes(name);
-  };
+  }
 
   render() {
     return (

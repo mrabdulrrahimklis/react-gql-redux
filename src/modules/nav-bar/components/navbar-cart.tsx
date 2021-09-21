@@ -124,6 +124,7 @@ class NavbarCart extends Component<any, any> {
                       >
                         {this.findCurrency(item.price)}
                       </Typography>
+                      {item.sizes[0]?.name}
                       <Box
                         display="flex"
                         overflow="auto"
@@ -149,6 +150,7 @@ class NavbarCart extends Component<any, any> {
                           )
                         )}
                       </Box>
+                      {item.sizes[1]?.name}
                       <Box
                         display="flex"
                         overflow="auto"

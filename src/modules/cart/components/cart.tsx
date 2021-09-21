@@ -61,7 +61,7 @@ class Cart extends Component<any, any> {
       );
   }
 
-  previousImage = (itemsLength: number) => {
+  previousImage(itemsLength: number) {
     if (this.state.imageIndex === 0) {
       this.setState({
         imageIndex: itemsLength - 1,
@@ -71,9 +71,9 @@ class Cart extends Component<any, any> {
         imageIndex: this.state.imageIndex - 1,
       });
     }
-  };
+  }
 
-  nextImage = (itemsLength: number) => {
+  nextImage(itemsLength: number) {
     if (this.state.imageIndex < itemsLength - 1) {
       this.setState({
         imageIndex: this.state.imageIndex + 1,
@@ -83,7 +83,7 @@ class Cart extends Component<any, any> {
         imageIndex: 0,
       });
     }
-  };
+  }
 
   render() {
     return (
