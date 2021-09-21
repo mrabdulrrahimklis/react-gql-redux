@@ -260,16 +260,18 @@ class NavbarCart extends Component<any, any> {
                     View bag
                   </Button>
                 </Link>
-                <Button
-                  marginTop="30px"
-                  bgColor="#5ECE7B"
-                  padding="16px 40px"
-                  textTransform="uppercase"
-                  fontSize="14px"
-                  fontWeight="600"
-                >
-                  Check out
-                </Button>
+                <Link to="/cart">
+                  <Button
+                    marginTop="30px"
+                    bgColor="#5ECE7B"
+                    padding="16px 40px"
+                    textTransform="uppercase"
+                    fontSize="14px"
+                    fontWeight="600"
+                  >
+                    Check out
+                  </Button>
+                </Link>
               </Box>
             </Box>
           </Box>
