@@ -57,10 +57,6 @@ export const ButtonHover = styled(Button)`
     background-color: #000000;
     color: white;
   }
-  &:focus {
-    background-color: #000000;
-    color: white;
-  }
   ${(props) =>
     props.isActive &&
     css`

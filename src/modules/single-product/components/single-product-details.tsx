@@ -24,6 +24,7 @@ class SingleProductDetails extends Component<any, any> {
     const { id, name, brand, price, description, attributes, image } = props;
 
     if (
+      !attributes.length ||
       (!attributes?.[1] && this.state.itemSize) ||
       (attributes?.[1] && this.state.itemSwatch && this.state.itemSize)
     ) {
@@ -138,13 +139,13 @@ class SingleProductDetails extends Component<any, any> {
                     {attributes[1]?.items?.map((swatch: any, index: number) => (
                       <ButtonHover
                         isActiveSwatch={swatch.value === this.state.itemSwatch}
-                        bgColor={swatch.value}
+                        bgColor="#4f4f4f4f"
+                        color={swatch.value}
                         cursor
                         key={index}
                         fontSize="12px"
                         fontWeight="normal"
-                        color="#1D1F22"
-                        border="1px solid #1D1F22"
+                        border={`1px solid ${swatch.value}`}
                         padding="2px"
                         marginTop="5px"
                         marginRight="2px"

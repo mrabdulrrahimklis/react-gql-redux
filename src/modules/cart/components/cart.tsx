@@ -147,6 +147,27 @@ class Cart extends Component<any, any> {
                       </div>
                     ))}
                   </Box>
+
+                  <Box display="flex" margin="0px 0px 10px 0px">
+                    {item.sizes[1]?.items.map((swatch: any, index: number) => (
+                      <ButtonHover
+                        bgColor="#4f4f4f4f"
+                        color={swatch.value}
+                        cursor
+                        key={index}
+                        fontSize="12px"
+                        fontWeight="normal"
+                        border={`1px solid ${swatch.value}`}
+                        padding="2px"
+                        marginTop="5px"
+                        marginRight="2px"
+                        height="20px"
+                        isActiveSwatch={swatch.value === item.itemSwatch}
+                      >
+                        {swatch.displayValue}
+                      </ButtonHover>
+                    ))}
+                  </Box>
                 </Box>
 
                 <Box display="flex">
