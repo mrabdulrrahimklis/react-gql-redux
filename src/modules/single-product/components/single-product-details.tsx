@@ -8,6 +8,7 @@ import {
 } from "../../../core/shared";
 import { connect } from "react-redux";
 import { addProductToCart } from "../../cart/state/store/cart";
+import ReactHtmlParser from 'react-html-parser';
 
 class SingleProductDetails extends Component<any, any> {
   constructor(props: any) {
@@ -92,80 +93,58 @@ class SingleProductDetails extends Component<any, any> {
           <Typography fontStyle="normal" fontWeight="normal" fontSize="30px">
             {name}
           </Typography>
-          {attributes?.[0] && (
-            <>
-              <Typography
-                marginTop="80px"
-                marginBottom="10px"
-                fontWeight="bold"
-                fontSize="18px"
-                textTransform="uppercase"
-              >
-                {attributes?.[0]?.name}
-              </Typography>
-              <Box width="300px">
-                {attributes[0]?.items?.map((size: any, index: number) => (
-                  <ButtonHover
-                    isActive={size.value === this.state.itemSize}
-                    cursor
-                    key={index}
-                    fontSize="16px"
-                    fontWeight="normal"
-                    bgColor="white"
-                    color="#1D1F22"
-                    border="1px solid #1D1F22"
-                    padding="16px"
-                    marginTop="5px"
-                    marginRight="20px"
-                    onClick={() => this.setState({ itemSize: size.value })}
-                  >
-                    {size.value}
-                  </ButtonHover>
-                ))}
-              </Box>
 
-              {attributes?.[1] && (
-                <>
-                  <Typography
-                    marginTop="80px"
-                    marginBottom="10px"
-                    fontWeight="bold"
-                    fontSize="18px"
-                    textTransform="uppercase"
+          {
+            attributes && attributes?.map((item: any) => {
+            return (<>
+              <Typography
+                  marginTop="30px"
+                  marginBottom="10px"
+                  fontWeight="bold"
+                  fontSize="18px"
+                  textTransform="uppercase"
+              >
+                {item.name}
+              </Typography>
+                {item.name === 'Color' && item.items.map((product: any, index: number) =>
+                    <ButtonHover
+                      isActive={product.value === this.state.itemSize}
+                      cursor
+                      key={index}
+                      fontSize="16px"
+                      fontWeight="normal"
+                      bgColor={product.value}
+                      border="1px solid #1D1F22"
+                      padding="16px"
+                      marginRight="20px"
+                      onClick={() => this.setState({ itemSize: product.value })}
+                  />
+                )}
+
+              {item.name !== 'Color' && item.items.map((product: any, index: number) =>
+                  <ButtonHover
+                      isActive={product.value === this.state.itemSize}
+                      cursor
+                      key={index}
+                      fontSize="16px"
+                      fontWeight="normal"
+                      bgColor="white"
+                      color="#1D1F22"
+                      border="1px solid #1D1F22"
+                      padding="16px"
+                      marginRight="20px"
+                      onClick={() => this.setState({ itemSize: product.value })}
                   >
-                    {attributes?.[1]?.name}
-                  </Typography>
-                  <Box width="300px">
-                    {attributes[1]?.items?.map((swatch: any, index: number) => (
-                      <ButtonHover
-                        isActiveSwatch={swatch.value === this.state.itemSwatch}
-                        bgColor="#4f4f4f4f"
-                        color={swatch.value}
-                        cursor
-                        key={index}
-                        fontSize="12px"
-                        fontWeight="normal"
-                        border={`1px solid ${swatch.value}`}
-                        padding="2px"
-                        marginTop="5px"
-                        marginRight="2px"
-                        height="20px"
-                        onClick={() =>
-                          this.setState({ itemSwatch: swatch.value })
-                        }
-                      >
-                        {swatch.displayValue}
-                      </ButtonHover>
-                    ))}
-                  </Box>
-                </>
+                    {product.value}
+                  </ButtonHover>
               )}
-            </>
-          )}
+            </>)
+            })
+          }
           <Typography
             fontWeight="bold"
             fontSize="18px"
-            marginTop="80px"
+            marginTop="20px"
             marginBottom="20px"
             textTransform="uppercase"
           >
@@ -208,17 +187,7 @@ class SingleProductDetails extends Component<any, any> {
               Please choose Size and Swatch
             </Typography>
           )}
-
-          <Typography
-            fontStyle="normal"
-            fontWeight="normal"
-            fontSize="16px"
-            width="300px"
-            lineHeight="1.5"
-            dangerouslySetInnerHTML={{
-              __html: description,
-            }}
-          />
+          {ReactHtmlParser(description)}
         </SpecialMobileBox>
       </>
     );

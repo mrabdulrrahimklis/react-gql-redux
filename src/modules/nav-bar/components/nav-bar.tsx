@@ -51,7 +51,16 @@ class NavbarOne extends Component<any, any> {
   render() {
     return (
       <>
-        <FlexContainer justifyContent="space-between">
+        <FlexContainer
+           padding={'0 70px'}
+           justifyContent="space-between"
+           onClick={() => {
+             if(this.props.navbarData.showCart === true || this.props.navbarData.open === true) {
+               this.props.setOpenCartAction(false);
+               this.props.setOpenCurrenciesAction(false);
+             }
+           }}
+        >
           <FlexContainer justifyContent="center">
             {this.props.navbarData.categoriesName?.categories?.map(
               (category: any, index: number) => (
@@ -73,27 +82,29 @@ class NavbarOne extends Component<any, any> {
               <img src={BrandIcon} alt="Brand Icon" />
             </Link>
           </FlexContainer>
-          <FlexContainer display="flex" justifyContent="center">
-            <Box>{this.props.currentCurrency}</Box>
+          <FlexContainer display="flex" justifyContent="center" >
+            <Box display='flex' onClick={() => {
+              this.props.setOpenCurrenciesAction(
+                  !this.props.navbarData.open
+              );
+              this.props.setOpenCartAction(false);
+            }}>
+            <Box>
+              {this.props.currentCurrency}
+            </Box>
             <Box padding="0px 20px 0px 3px">
               <Button
                 bgColor="white"
-                onClick={() => {
-                  this.props.setOpenCurrenciesAction(
-                    !this.props.navbarData.open
-                  );
-                  this.props.setOpenCartAction(false);
-                }}
               >
                 {this.props.navbarData.open ? (
-                  <Image src={ArrowTwo} alt="Less" />
+                    <Image src={ArrowTwo} alt="Less" />
                 ) : (
-                  <Image src={Arrow} alt="More" />
+                    <Image src={Arrow} alt="More" />
                 )}
               </Button>
             </Box>
-
-            <Box padding="0px 20px 0px 3px">
+            </Box>
+            <Box padding="0px 20px 0px 3px"   >
               <Button
                 bgColor="white"
                 onClick={() => {

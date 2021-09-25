@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { withRouter } from "react-router";
-import { ProductsContainer, Typography } from "../../../core/shared";
+import { ProductsContainer, Typography, Box } from "../../../core/shared";
 import CategoryHeading from "../components/category-heading";
 import Product from "../components/product";
 import { connect } from "react-redux";
@@ -26,7 +26,7 @@ class HomePage extends Component<any, HomePageState> {
 
   render() {
     return (
-      <>
+      <Box padding='0 70px'>
         {this.props.products.loaded === null && (
           <Typography>Loading...</Typography>
         )}
@@ -45,6 +45,7 @@ class HomePage extends Component<any, HomePageState> {
                     category={product.category}
                     inStock={product.inStock}
                     image={product.gallery[0]}
+                    brand={product.brand}
                     attributes={product.attributes}
                     name={product.name}
                     price={this.findCurrency(product.prices)}
@@ -54,7 +55,7 @@ class HomePage extends Component<any, HomePageState> {
             </ProductsContainer>
           </>
         )}
-      </>
+      </Box>
     );
   }
 }

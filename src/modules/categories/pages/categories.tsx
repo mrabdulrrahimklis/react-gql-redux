@@ -54,6 +54,7 @@ class CategoriesPage extends Component<any, CategoriesPageState> {
                       inStock={product.inStock}
                       image={product.gallery[0]}
                       name={product.name}
+                      brand={product.brand}
                       category={product.category}
                       attributes={product.attributes}
                       price={this.findCurrency(product.prices)}
