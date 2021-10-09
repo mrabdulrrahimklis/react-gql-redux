@@ -1,29 +1,33 @@
 import { Component } from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
 import Arrow from "../../../assets/Arrow.png";
 import BrandIcon from "../../../assets/Brandicon.png";
 import ShoppingCart from "../../../assets/Vector.png";
 import ArrowTwo from "../../../assets/VectorTwo.png";
+import { isActiveMenuItem, numberOfItemsInCart } from "../../../core/helpers";
 import {
-  Box,
-  Button,
+  ButtonWhite,
   CustomLink,
-  FlexContainer,
-  Image,
+  FlexCenterContainer,
+  FlexContainerNavbar,
+  ImageNavbar,
   NavbarHeading,
-  Typography,
+  NavbarPaddingContainer,
+  NumberOfItemsBox,
+  NumberOfItemsText,
+  NumberOfProductsContainer,
 } from "../../../core/shared";
-import Cart from "./navbar-cart";
-import Currency from "./navbar-currency";
-import { connect } from "react-redux";
 import {
   getCategoriesNameAction,
   getCurrenciesAction,
+  setCurrency,
   setOpenCartAction,
   setOpenCurrenciesAction,
-  setCurrency,
 } from "../state/store/nav-bar";
-import { withRouter } from "react-router";
+import Cart from "./navbar-cart";
+import Currency from "./navbar-currency";
 
 export interface NavbarOneProps {
   data?: any;
@@ -44,117 +48,96 @@ class NavbarOne extends Component<any, any> {
     this.props.getCurrenciesAction();
   }
 
-  isActive(name: string) {
-    return !!this.props.location.pathname.includes(name);
-  }
-
   render() {
+    const {
+      navbarData,
+      setOpenCartAction,
+      setOpenCurrenciesAction,
+      currentCurrency,
+      numberOfItemsInCard,
+      location,
+      selectedProducts: { selectedProducts },
+    } = this.props;
+
     return (
       <>
-        <FlexContainer
-           padding={'0 70px'}
-           justifyContent="space-between"
-           onClick={() => {
-             if(this.props.navbarData.showCart === true || this.props.navbarData.open === true) {
-               this.props.setOpenCartAction(false);
-               this.props.setOpenCurrenciesAction(false);
-             }
-           }}
+        <FlexContainerNavbar
+          onClick={() => {
+            if (navbarData.showCart === true || navbarData.open === true) {
+              setOpenCartAction(false);
+              setOpenCurrenciesAction(false);
+            }
+          }}
         >
-          <FlexContainer justifyContent="center">
-            {this.props.navbarData.categoriesName?.categories?.map(
+          <FlexCenterContainer>
+            {navbarData.categoriesName?.categories?.map(
               (category: any, index: number) => (
                 <CustomLink to={`/categories/${category.name}`} key={index}>
                   <NavbarHeading
-                    isActive={this.isActive(category.name)}
-                    color="#1D1F22"
-                    fontWeight="10"
-                    textTransform="uppercase"
+                    isActive={isActiveMenuItem(location, category.name)}
                   >
                     {category.name}
                   </NavbarHeading>
                 </CustomLink>
               )
             )}
-          </FlexContainer>
-          <FlexContainer>
+          </FlexCenterContainer>
+          <FlexCenterContainer>
             <Link to="/">
               <img src={BrandIcon} alt="Brand Icon" />
             </Link>
-          </FlexContainer>
-          <FlexContainer display="flex" justifyContent="center" >
-            <Box display='flex' onClick={() => {
-              this.props.setOpenCurrenciesAction(
-                  !this.props.navbarData.open
-              );
-              this.props.setOpenCartAction(false);
-            }}>
-            <Box>
-              {this.props.currentCurrency}
-            </Box>
-            <Box padding="0px 20px 0px 3px">
-              <Button
-                bgColor="white"
-              >
-                {this.props.navbarData.open ? (
-                    <Image src={ArrowTwo} alt="Less" />
-                ) : (
-                    <Image src={Arrow} alt="More" />
-                )}
-              </Button>
-            </Box>
-            </Box>
-            <Box padding="0px 20px 0px 3px"   >
-              <Button
-                bgColor="white"
+          </FlexCenterContainer>
+          <FlexCenterContainer>
+            <FlexCenterContainer
+              onClick={() => {
+                setOpenCurrenciesAction(!navbarData.open);
+                setOpenCartAction(false);
+              }}
+            >
+              <FlexCenterContainer>{currentCurrency}</FlexCenterContainer>
+              <NavbarPaddingContainer>
+                <ButtonWhite>
+                  {navbarData.open ? (
+                    <ImageNavbar src={ArrowTwo} alt="Less" />
+                  ) : (
+                    <ImageNavbar src={Arrow} alt="More" />
+                  )}
+                </ButtonWhite>
+              </NavbarPaddingContainer>
+            </FlexCenterContainer>
+            <NavbarPaddingContainer>
+              <ButtonWhite
                 onClick={() => {
-                  this.props.setOpenCartAction(!this.props.navbarData.showCart);
-                  this.props.setOpenCurrenciesAction(false);
+                  setOpenCartAction(!navbarData.showCart);
+                  setOpenCurrenciesAction(false);
                 }}
               >
-                <Image src={ShoppingCart} alt="Shopping Cart" />
-                <Box position="absolute" margin="-30px 0px 0px 13px">
-                  {this.props.numberOfItemsInCard && (
-                    <Box
-                      borderRadius="50%"
-                      bgColor="#1D1F22"
-                      color="white"
-                      height="20px"
-                      width="20px"
-                    >
-                      <Typography
-                        fontWeight="bold"
-                        fontSize="12px"
-                        color="white"
-                        lineHeight="20px"
-                      >
-                        {this.props.numberOfItemsInCard}
-                      </Typography>
-                    </Box>
+                <ImageNavbar src={ShoppingCart} alt="Shopping Cart" />
+                <NumberOfProductsContainer>
+                  {numberOfItemsInCard ? (
+                    <NumberOfItemsBox>
+                      <NumberOfItemsText>
+                        {numberOfItemsInCart(selectedProducts)}
+                      </NumberOfItemsText>
+                    </NumberOfItemsBox>
+                  ) : (
+                    <></>
                   )}
-                </Box>
-              </Button>
-            </Box>
-          </FlexContainer>
-        </FlexContainer>
-        {this.props.navbarData.open && (
-          <div
-            onClick={() =>
-              this.props.setOpenCurrenciesAction(!this.props.navbarData.open)
-            }
-          >
+                </NumberOfProductsContainer>
+              </ButtonWhite>
+            </NavbarPaddingContainer>
+          </FlexCenterContainer>
+        </FlexContainerNavbar>
+        {navbarData.open && (
+          <div onClick={() => setOpenCurrenciesAction(!navbarData.open)}>
             <Currency
-              currencies={this.props.navbarData.currencies?.currencies}
-              open={this.props.navbarData.open}
+              currencies={navbarData.currencies?.currencies}
+              open={navbarData.open}
             />
           </div>
         )}
-        {this.props.navbarData.showCart && (
-          <div
-            onClick={() =>
-              this.props.setOpenCartAction(!this.props.navbarData.showCart)
-            }
-          >
+        {navbarData.showCart && (
+          <div>
             <Cart />
           </div>
         )}
@@ -164,10 +147,16 @@ class NavbarOne extends Component<any, any> {
 }
 
 const mapStateToProps = (state: any) => {
+  const {
+    navbarData,
+    selectedProducts,
+    navbarData: { currency },
+  } = state;
   return {
-    navbarData: state.navbarData,
-    currentCurrency: state.navbarData.currency,
-    numberOfItemsInCard: state.selectedProducts.selectedProducts.length,
+    navbarData,
+    selectedProducts,
+    currentCurrency: currency,
+    numberOfItemsInCard: selectedProducts.selectedProducts.length,
   };
 };
 

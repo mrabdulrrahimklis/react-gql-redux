@@ -1,71 +1,74 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router";
-import { ProductsContainer, Typography, Box } from "../../../core/shared";
-import CategoryHeading from "../components/category-heading";
-import Product from "../components/product";
 import { connect } from "react-redux";
+import { withRouter } from "react-router";
+import {
+  CategoryHeading,
+  MainPadding,
+  ProductsContainer,
+} from "../../../core/shared";
+import LoadedComponent from "../components/loaded-component";
+import LoadingComponent from "../components/loading-component";
+import Product from "../components/product";
 import { getProductsAction } from "../state/store/all-products";
 
-interface HomePageState {
-  loaded: boolean | null;
-  data: any | null;
-}
-
-class HomePage extends Component<any, HomePageState> {
+class HomePage extends Component<any, any> {
   componentDidMount() {
     this.props.getProductsAction();
   }
 
-  findCurrency(prices: any) {
-    const currentPrice = prices?.find(
-      (price: any) => price.currency === this.props.currency
-    );
-
-    return `${currentPrice.currency} ${currentPrice.amount}`;
-  }
-
   render() {
+    const {
+      products: { loaded, products },
+    } = this.props;
+
     return (
-      <Box padding='0 70px'>
-        {this.props.products.loaded === null && (
-          <Typography>Loading...</Typography>
-        )}
-        {!this.props.products.loaded && (
-          <Typography>Check your internet...</Typography>
-        )}
+      <MainPadding>
+        <LoadingComponent loading={loaded} />
+        <LoadedComponent loaded={loaded} />
         {this.props.products.loaded && (
           <>
-            {<CategoryHeading heading={"All Products"} />}
-            <ProductsContainer marginTop="80px" marginBottom="80px">
-              {this.props.products.products?.categories?.map((category: any) =>
-                category.products.map((product: any, index: number) => (
-                  <Product
-                    key={product.id}
-                    id={product.id}
-                    category={product.category}
-                    inStock={product.inStock}
-                    image={product.gallery[0]}
-                    brand={product.brand}
-                    attributes={product.attributes}
-                    name={product.name}
-                    price={this.findCurrency(product.prices)}
-                  />
-                ))
-              )}
-            </ProductsContainer>
+            {this.props.products.products?.categories && (
+              <>
+                <CategoryHeading>All Products</CategoryHeading>
+                <ProductsContainer>
+                  {products?.categories?.map((category: any) =>
+                    category.products.map((product: any, index: number) => (
+                      <Product
+                        key={index}
+                        id={product.id}
+                        category={product.category}
+                        inStock={product.inStock}
+                        image={product.gallery}
+                        brand={product.brand}
+                        description={product.description}
+                        attributes={product.attributes}
+                        name={product.name}
+                        price={product.prices}
+                      />
+                    ))
+                  )}
+                </ProductsContainer>
+              </>
+            )}
           </>
         )}
-      </Box>
+      </MainPadding>
     );
   }
 }
 
 const mapStateToProps = (state: any) => {
+  const {
+    products,
+    loaded,
+    navbarData: { currency, currencies },
+  } = state;
+
   return {
-    products: state.products,
-    loaded: state.loaded,
-    currency: state.navbarData.currency,
-    currencies: state.navbarData.currencies,
+    products,
+    loaded,
+    currency,
+    currencies,
   };
 };
 

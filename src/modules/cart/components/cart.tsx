@@ -1,275 +1,138 @@
 import React, { Component } from "react";
-import {
-  Box,
-  ButtonHover,
-  Image,
-  SingleProductBox,
-  Typography,
-} from "../../../core/shared";
+import { connect } from "react-redux";
 import { withRouter } from "react-router";
+import { finalPrice, findCurrency, isActive } from "../../../core/helpers";
+import {
+  AttributesButton,
+  AttributesNameText,
+  BoldTextCenter,
+  BorderTopBox,
+  BrandTypography,
+  CartText,
+  CountBox,
+  FlexBox,
+  MainPadding,
+  NameTypography,
+  PlusAndMinusButton,
+  PriceTypography,
+  ProductBox,
+  SimpleBlockBox,
+  SpaceBetweenBox,
+} from "../../../core/shared";
+import { CartColorButton } from "../../../core/shared/navbar-cart";
 import {
   getSelectedProductsAction,
   minusOneProduct,
   plusOneProduct,
   setSelectedProductsAction,
 } from "../state/store/cart";
-import { connect } from "react-redux";
-import VectorLeft from "../../../assets/VectorLeft.png";
-import VectorRight from "../../../assets/VectorRight.png";
-import { IPrice } from "../../nav-bar/models/navbar-model";
+import ImageSlider from "./image-slider";
 
 class Cart extends Component<any, any> {
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      imageIndex: 0,
-    };
-  }
-
   componentDidMount() {
-    this.props.getSelectedProductsAction();
-  }
-
-  findCurrency(prices: any) {
-    const currentPrice = prices?.find(
-      (price: any) => price.currency === this.props.currency
-    );
-
-    return `${currentPrice.currency} ${currentPrice.amount}`;
-  }
-
-  finalPrice() {
-    const finalPrices = this.props.selectedProducts?.selectedProducts?.map(
-      (finalPriceItem: any) => {
-        let currentItem = finalPriceItem.price.find(
-          (item: IPrice) => item.currency === this.props.currency
-        );
-
-        return {
-          ...currentItem,
-          amount: currentItem.amount * finalPriceItem.count,
-        };
-      }
-    );
-
-    return finalPrices
-      ?.map((item: IPrice) => +item.amount)
-      .reduce(
-        (previousValue: number, currentValue: number) =>
-          previousValue + currentValue,
-        0
-      );
-  }
-
-  previousImage(itemsLength: number) {
-    if (this.state.imageIndex === 0) {
-      this.setState({
-        imageIndex: itemsLength - 1,
-      });
-    } else {
-      this.setState({
-        imageIndex: this.state.imageIndex - 1,
-      });
-    }
-  }
-
-  nextImage(itemsLength: number) {
-    if (this.state.imageIndex < itemsLength - 1) {
-      this.setState({
-        imageIndex: this.state.imageIndex + 1,
-      });
-    } else {
-      this.setState({
-        imageIndex: 0,
-      });
-    }
+    const { getSelectedProductsAction } = this.props;
+    getSelectedProductsAction();
   }
 
   render() {
+    const {
+      selectedProducts: { selectedProducts, plusOneProduct, minusOneProduct },
+      currency,
+    } = this.props;
+
     return (
-      <div>
-        <Typography
-          marginTop="50px"
-          marginBottom="80px"
-          textTransform="uppercase"
-          fontWeight="bold"
-          fontSize="32px"
-        >
-          Cart
-        </Typography>
-        {this.props.selectedProducts?.selectedProducts.map(
-          (item: any, index: number) => (
-            <Box
-              key={index}
-              borderTop="2px solid #E5E5E5"
-              padding="20px 0px"
-              width="90%"
-            >
-              <SingleProductBox display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography
-                    fontStyle="normal"
-                    fontWeight="600"
-                    fontSize="30px"
-                  >
-                    {item.brand}
-                  </Typography>
-                  <Typography
-                    fontStyle="normal"
-                    fontWeight="normal"
-                    fontSize="30px"
-                  >
-                    {item.name}
-                  </Typography>
-                  <Typography
-                    fontStyle="normal"
-                    fontWeight="bold"
-                    fontSize="24px"
-                    marginTop="10px"
-                  >
-                    {this.findCurrency(item.price)}
-                  </Typography>
-                  <Box display="flex" margin="0px 0px 10px 0px">
-                    {item.sizes[0]?.items.map((size: any, index: number) => (
-                      <div key={index}>
-                        <ButtonHover
-                          padding="16px"
-                          color="#1D1F22"
-                          bgColor="white"
-                          fontSize="16px"
-                          border="1px solid #1D1F22"
-                          marginTop="10px"
-                          marginRight="20px"
-                          isActive={size.value === item.itemSize}
-                        >
-                          {size.value}
-                        </ButtonHover>
-                      </div>
-                    ))}
-                  </Box>
-
-                  <Box display="flex" margin="0px 0px 10px 0px">
-                    {item.sizes[1]?.items.map((swatch: any, index: number) => (
-                      <ButtonHover
-                        bgColor="#4f4f4f4f"
-                        color={swatch.value}
-                        cursor
-                        key={index}
-                        fontSize="12px"
-                        fontWeight="normal"
-                        border={`1px solid ${swatch.value}`}
-                        padding="2px"
-                        marginTop="5px"
-                        marginRight="2px"
-                        height="20px"
-                        isActiveSwatch={swatch.value === item.itemSwatch}
-                      >
-                        {swatch.displayValue}
-                      </ButtonHover>
-                    ))}
-                  </Box>
-                </Box>
-
-                <Box display="flex">
-                  <Box display="block" margin="0px 20px 0px 0px">
-                    <ButtonHover
-                      onClick={() => this.props.plusOneProduct(item)}
-                      padding="16px"
-                      width="55px"
-                      color="#1D1F22"
-                      bgColor="white"
-                      border="1px solid #1D1F22"
-                      marginBottom="24px"
-                    >
+      <MainPadding>
+        <CartText>Cart</CartText>
+        {selectedProducts?.map((item: any, index: number) => (
+          <BorderTopBox key={index}>
+            <ProductBox>
+              <div>
+                <BrandTypography>{item.brand}</BrandTypography>
+                <NameTypography>{item.name}</NameTypography>
+                <PriceTypography>
+                  {findCurrency(item.price, currency)}
+                </PriceTypography>
+                {item?.sizes.map((size: any, indexName: number) => {
+                  return (
+                    <SimpleBlockBox key={indexName}>
+                      <AttributesNameText>{size?.name}</AttributesNameText>
+                      {size?.name === "Color" &&
+                        size.items.map((sizeItem: any, index: number) => {
+                          return (
+                            <>
+                              <CartColorButton
+                                isActive={isActive(
+                                  size.name,
+                                  item.itemType,
+                                  sizeItem
+                                )}
+                                key={index}
+                                bgColor={sizeItem.value}
+                              />
+                            </>
+                          );
+                        })}
+                      {size?.name !== "Color" &&
+                        size.items.map((sizeItem: any, indexName: number) => (
+                          <AttributesButton
+                            key={indexName}
+                            isActive={isActive(
+                              size.name,
+                              item.itemType,
+                              sizeItem
+                            )}
+                          >
+                            {sizeItem?.value}
+                          </AttributesButton>
+                        ))}
+                    </SimpleBlockBox>
+                  );
+                })}
+              </div>
+              <FlexBox>
+                <CountBox>
+                  <div>
+                    <PlusAndMinusButton onClick={() => plusOneProduct(item)}>
                       +
-                    </ButtonHover>
-                    <Typography
-                      fontStyle="normal"
-                      fontWeight="500"
-                      fontSize="24px"
-                      textAlign="center"
-                    >
-                      {item.count}
-                    </Typography>
-
-                    <ButtonHover
-                      onClick={() => this.props.minusOneProduct(item)}
-                      padding="16px"
-                      width="55px"
-                      color="#1D1F22"
-                      bgColor="white"
-                      border="1px solid #1D1F22"
-                      marginTop="24px"
-                    >
+                    </PlusAndMinusButton>
+                  </div>
+                  <div>
+                    <BoldTextCenter>{item.count}</BoldTextCenter>
+                  </div>
+                  <div>
+                    <PlusAndMinusButton onClick={() => minusOneProduct(item)}>
                       -
-                    </ButtonHover>
-                  </Box>
-                  <Box>
-                    <Box position="absolute" zIndex="1">
-                      <Image
-                        src={item.image[this.state.imageIndex]}
-                        alt="Product"
-                        width="180px"
-                        height="180"
-                      />
-                    </Box>
-
-                    <Box
-                      position="relative"
-                      zIndex="2"
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      height="100%"
-                      width="180px"
-                    >
-                      <Box padding="0px 10px">
-                        <Image
-                          src={VectorLeft}
-                          height="10px"
-                          width="10px"
-                          onClick={() => this.previousImage(item.image.length)}
-                        />
-                      </Box>
-                      <Box padding="0px 10px">
-                        <Image
-                          src={VectorRight}
-                          height="10px"
-                          width="10px"
-                          onClick={() => this.nextImage(item.image.length)}
-                        />
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
-              </SingleProductBox>
-            </Box>
-          )
-        )}
-        <hr />
-        <Box display="flex" justifyContent="space-between">
-          <Typography fontStyle="normal" fontWeight="500" fontSize="26px">
-            Total
-          </Typography>
-
-          <Typography
-            fontStyle="normal"
-            fontWeight="bold"
-            fontSize="26px"
-            textAlign="right"
-          >
-            {`${this.finalPrice().toFixed(2)} ${this.props.currency}`}
-          </Typography>
-        </Box>
-      </div>
+                    </PlusAndMinusButton>
+                  </div>
+                </CountBox>
+                <ImageSlider item={item} />
+              </FlexBox>
+            </ProductBox>
+          </BorderTopBox>
+        ))}
+        <BorderTopBox>
+          <SpaceBetweenBox>
+            <BrandTypography>Total</BrandTypography>
+            <NameTypography>{`${currency} ${finalPrice(
+              selectedProducts,
+              currency
+            ).toFixed(2)}`}</NameTypography>
+          </SpaceBetweenBox>
+        </BorderTopBox>
+      </MainPadding>
     );
   }
 }
 
 const mapStateToProps = (state: any) => {
+  const {
+    selectedProducts,
+    navbarData: { currency },
+  } = state;
+
   return {
-    selectedProducts: state.selectedProducts,
-    currency: state.navbarData.currency,
+    selectedProducts,
+    currency,
   };
 };
 

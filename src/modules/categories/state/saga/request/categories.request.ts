@@ -6,5 +6,6 @@ export function getCategories(category: string) {
     variables: {
       category,
     },
+    fetchPolicy: "no-cache",
   });
 }

@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import {
-  Image,
+  NormalProductImage,
   SingleProductImages,
-  SpecialMobileBox,
+  SmallProductImage,
+  SpecialRightMarginBox,
 } from "../../../core/shared";
-
 class SingleProductGallery extends Component<any, any> {
   constructor(props: any) {
     super(props);
+
     this.state = {
       index: 0,
     };
@@ -18,37 +19,21 @@ class SingleProductGallery extends Component<any, any> {
 
     return (
       <>
-        <SingleProductImages
-          margin="0px 20px 0px 0px"
-          padding="1%"
-          maxHeight="800px"
-          overflow="auto"
-        >
+        <SingleProductImages>
           {gallery?.map((image: any, index: number) => (
-            <Image
-              cursorPointer
+            <SmallProductImage
               onClick={() => this.setState({ index })}
               src={image}
               key={index}
               alt="Product"
-              width="100%"
-              objectFit="contain"
-              height="120px"
-              margin="0px 0px 15px 0px"
             />
           ))}
         </SingleProductImages>
-        <SpecialMobileBox margin="0px 15px 0px 0px">
+        <SpecialRightMarginBox>
           {gallery && (
-            <Image
-              src={gallery[this.state.index]}
-              alt="Product"
-              width="100%"
-              objectFit="contain"
-              height="auto"
-            />
+            <NormalProductImage src={gallery[this.state.index]} alt="Product" />
           )}
-        </SpecialMobileBox>
+        </SpecialRightMarginBox>
       </>
     );
   }

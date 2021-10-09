@@ -6,5 +6,6 @@ export function getSingleProduct(product: string) {
     variables: {
       product,
     },
+    fetchPolicy: "no-cache",
   });
 }

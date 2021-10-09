@@ -1,65 +1,69 @@
 import React, { Component } from "react";
-import { SingleProductBox, Typography } from "../../../core/shared";
-import { withRouter } from "react-router";
-import SingleProductGallery from "../components/single-product-gallery";
-import SingleProductDetails from "../components/single-product-details";
-import { getSingleProductAction } from "../state/store/single-product";
 import { connect } from "react-redux";
+import { withRouter } from "react-router";
+import { MainPadding, SingleProductContainer } from "../../../core/shared";
+import SingleProductDetails from "../components/single-product-details";
+import SingleProductGallery from "../components/single-product-gallery";
+import {
+  getSingleProductAction,
+  setSingleProductAction,
+} from "../state/store/single-product";
 
-interface SingleProductPageState {
-  loaded: boolean | null;
-  data: any | null;
-}
-class SingleProductPage extends Component<any, SingleProductPageState> {
+class SingleProductPage extends Component<any, any> {
+  async initProduct() {
+    const {
+      match: {
+        params: { product },
+      },
+      setSingleProductAction,
+      getSingleProductAction,
+    } = this.props;
+
+    setSingleProductAction(product);
+    getSingleProductAction(product);
+  }
+
   componentDidMount() {
-    const { product } = this.props.match.params;
-    this.props.getSingleProductAction(product);
+    this.initProduct();
   }
 
   render() {
-    return (
-      <>
-        {this.props.product.loaded === null && (
-          <Typography>Loading...</Typography>
-        )}
-        {!this.props.product.loaded && (
-          <Typography>Check your internet...</Typography>
-        )}
+    const {
+      product: { product },
+    } = this.props;
 
-        {this.props.product.loaded && (
-          <SingleProductBox
-            display="grid"
-            width="100%"
-            gridTemplateColumns="10% 45% 40%"
-            gridGap="0px 40px"
-            margin="80px 0px"
-          >
-            <SingleProductGallery
-              gallery={this.props.product.product?.product?.gallery}
-            />
+    return (
+      <MainPadding>
+        <SingleProductContainer>
+          <SingleProductGallery gallery={product?.gallery} />
+          {product && (
             <SingleProductDetails
-              id={this.props.product.product?.product?.id}
-              name={this.props.product.product?.product?.name}
-              brand={this.props.product.product?.product?.brand}
-              description={this.props.product.product?.product?.description}
-              price={this.props.product.product?.product?.prices}
-              attributes={this.props.product.product?.product?.attributes}
-              inStock={this.props.product.product?.product?.inStock}
-              image={this.props.product.product?.product?.gallery}
+              id={product.id}
+              name={product.name}
+              brand={product.brand}
+              description={product.description}
+              price={product.prices}
+              attributes={product.attributes}
+              inStock={product.inStock}
+              image={product.gallery}
             />
-          </SingleProductBox>
-        )}
-      </>
+          )}
+        </SingleProductContainer>
+      </MainPadding>
     );
   }
 }
 
 const mapStateToProps = (state: any) => {
-  return { product: state.product };
+  const {
+    product: { product },
+  } = state;
+  return { product };
 };
 
 const mapDispatchToProps = {
   getSingleProductAction,
+  setSingleProductAction,
 };
 
 export default connect(

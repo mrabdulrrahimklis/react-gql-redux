@@ -47,22 +47,20 @@ const selectedProductsDuck = (state = initialState, action: any) => {
       };
     }
     case ADD_PRODUCT_TO_CART: {
-      return {
-        ...state,
-        selectedProducts: [...state.selectedProducts, action.payload],
-      };
-    }
-    case PLUS_ONE_PRODUCT: {
       let { selectedProducts } = state;
       const item = state.selectedProducts.find(
-        (product: any) => product.id === action.payload.id
+        (product: any) =>
+          JSON.stringify(product.itemType) ===
+            JSON.stringify(action.payload.itemType) &&
+          action.payload.id === product.id
       );
 
       if (item) {
         // @ts-ignore
         selectedProducts = state.selectedProducts.map((product: any) =>
-          product.itemSize === action.payload.itemSize &&
-          product.id === action.payload.id
+          JSON.stringify(product.itemType) ===
+            JSON.stringify(action.payload.itemType) &&
+          action.payload.id === product.id
             ? {
                 ...product,
                 count: product.count + 1,
@@ -79,26 +77,63 @@ const selectedProductsDuck = (state = initialState, action: any) => {
         selectedProducts,
       };
     }
-    case MINUS_ONE_PRODUCT: {
+    case PLUS_ONE_PRODUCT: {
       let { selectedProducts } = state;
-      const item = state.selectedProducts.find(
-        (product: any) => product.id === action.payload.id
+      const item = selectedProducts.find(
+        (product: any) =>
+          JSON.stringify(product.itemType) ===
+            JSON.stringify(action.payload.itemType) &&
+          product.id === action.payload.id
       );
 
       if (item) {
         // @ts-ignore
-        selectedProducts = state.selectedProducts.map((product: any) =>
-          product.itemSize === action.payload.itemSize &&
-          product.id === action.payload.id
+        selectedProducts = selectedProducts.map((product: any) => {
+          return JSON.stringify(product?.itemType) ===
+            JSON.stringify(action.payload?.itemType) &&
+            product.id === action.payload.id
             ? {
                 ...product,
-                count: product.count > 0 ? product.count - 1 : 0,
+                count: product.count + 1,
               }
-            : product
-        );
+            : product;
+        });
       } else {
         // @ts-ignore
         selectedProducts.push(action.payload);
+      }
+
+      return {
+        ...state,
+        selectedProducts,
+      };
+    }
+    case MINUS_ONE_PRODUCT: {
+      let { selectedProducts } = state;
+      const item: any = state.selectedProducts.find(
+        (product: any) =>
+          JSON.stringify(product.itemType) ===
+            JSON.stringify(action.payload.itemType) &&
+          product.id === action.payload.id
+      );
+      const index = state.selectedProducts.indexOf(item as never);
+
+      if (item) {
+        if (item.count !== 1) {
+          // @ts-ignore
+          selectedProducts = state.selectedProducts.map((product: any) => {
+            return JSON.stringify(product.itemType) ===
+              JSON.stringify(action.payload.itemType) &&
+              product.id === action.payload.id
+              ? {
+                  ...product,
+                  count: product.count - 1,
+                }
+              : product;
+          });
+        } else {
+          state.selectedProducts.splice(index, 1);
+        }
       }
 
       return {

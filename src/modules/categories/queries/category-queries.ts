@@ -14,6 +14,7 @@ export const CATEGORY_QUERY = gql`
           amount
           currency
         }
+        brand
         attributes {
           id
           name

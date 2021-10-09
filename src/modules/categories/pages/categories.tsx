@@ -1,9 +1,14 @@
 import React, { Component } from "react";
-import { withRouter } from "react-router";
-import { ProductsContainer, Typography } from "../../../core/shared";
-import CategoryHeading from "../../home-page/components/category-heading";
-import Product from "../../home-page/components/product";
 import { connect } from "react-redux";
+import { withRouter } from "react-router";
+import {
+  CategoryHeading,
+  MainPadding,
+  ProductsContainer,
+} from "../../../core/shared";
+import LoadedComponent from "../../home-page/components/loaded-component";
+import LoadingComponent from "../../home-page/components/loading-component";
+import Product from "../../home-page/components/product";
 import { getCategoriesAction } from "../state/store/categories";
 interface CategoriesPageState {
   loaded: boolean | null;
@@ -15,14 +20,6 @@ class CategoriesPage extends Component<any, CategoriesPageState> {
     this.props.getCategoriesAction(category);
   }
 
-  findCurrency(prices: any) {
-    const currentPrice = prices?.find(
-      (price: any) => price.currency === this.props.currency
-    );
-
-    return `${currentPrice.currency} ${currentPrice.amount}`;
-  }
-
   componentWillReceiveProps(nextProps: any) {
     if (nextProps.location.pathname !== this.props.location.pathname) {
       const { categories: category } = nextProps.match.params;
@@ -31,47 +28,53 @@ class CategoriesPage extends Component<any, CategoriesPageState> {
   }
 
   render() {
+    const {
+      categories: {
+        categories: { category },
+      },
+      categories: { loaded },
+    } = this.props;
+
     return (
-      <>
-        {this.props.categories.loaded === null && (
-          <Typography>Loading...</Typography>
-        )}
-        {!this.props.categories.loaded && (
-          <Typography>Check your internet...</Typography>
-        )}
-        {this.props.categories.loaded && (
+      <MainPadding>
+        <LoadingComponent loading={loaded} />
+        <LoadedComponent loaded={loaded} />
+        {loaded && (
           <>
-            <CategoryHeading
-              heading={this.props.categories.categories.category?.name}
-            />
-            <ProductsContainer marginTop="80px" marginBottom="80px">
-              {this.props.categories.categories?.category?.products.map(
-                (product: any, index: number) => {
+            <CategoryHeading>{category?.name}</CategoryHeading>
+            {category && (
+              <ProductsContainer>
+                {category?.products.map((product: any, index: number) => {
                   return (
                     <Product
                       key={index}
                       id={product.id}
                       inStock={product.inStock}
-                      image={product.gallery[0]}
+                      image={product.gallery}
                       name={product.name}
+                      description={product.description}
                       brand={product.brand}
                       category={product.category}
                       attributes={product.attributes}
-                      price={this.findCurrency(product.prices)}
+                      price={product.prices}
                     />
                   );
-                }
-              )}
-            </ProductsContainer>
+                })}
+              </ProductsContainer>
+            )}
           </>
         )}
-      </>
+      </MainPadding>
     );
   }
 }
 
 const mapStateToProps = (state: any) => {
-  return { categories: state.categories, currency: state.navbarData.currency };
+  const {
+    categories,
+    navbarData: { currency },
+  } = state;
+  return { categories, currency };
 };
 
 const mapDispatchToProps = {

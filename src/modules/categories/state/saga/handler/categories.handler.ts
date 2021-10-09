@@ -4,8 +4,8 @@ import { getCategories } from "../request/categories.request";
 
 export function* handleCategories(action: any): any {
   try {
-    const response = yield call(() => getCategories(action.payload));
-    yield put(setCategoriesAction(response.data));
+    const { data } = yield call(() => getCategories(action.payload));
+    yield put(setCategoriesAction(data));
   } catch (e) {
     console.log(e);
   }
